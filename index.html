@@ -14,10 +14,12 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.js"></script>
 
     <!-- Angular -->
-    <script src="https://code.angularjs.org/1.6.6/angular.js"></script>
-    <script src="https://code.angularjs.org/1.6.6/angular-resource.js"></script>
-    <script src="https://code.angularjs.org/1.6.6/angular-route.js"></script>
-    <script src="https://angular-ui.github.io/bootstrap/ui-bootstrap-tpls-2.5.0.min.js"></script>
+    <script src="https://code.angularjs.org/1.4.7/angular.js"></script>
+
+    <link rel="stylesheet"; href="https://cdnjs.cloudflare.com/ajax/libs/angular-data-table/0.7.0/dataTable.css">
+    <link rel="stylesheet"; href="https://cdnjs.cloudflare.com/ajax/libs/angular-data-table/0.7.0/material.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-data-table/0.7.0/dataTable.js"></script>
+    <link rel="stylesheet prefetch" href="https://fontastic.s3.amazonaws.com/Jnf54BZCm7mSjGCxNRbfp3/icons.css">
 
     <title>Gradle Enterprise Export API Listener for Gradle Profiler</title>
 
@@ -27,7 +29,8 @@
 </head>
 
 <body>
-<form ng-controller="MainController" name="form" class="form-horizontal">
+<div ng-controller="MainController">
+<form name="form" class="form-horizontal">
 <fieldset>
 
     <!-- URL -->
@@ -51,20 +54,6 @@
                 >
                 <span>Listen</span>
             </button>
-        </div>
-    </div>
-
-    <div class="form-group">
-        <label class="col-md-2 control-label">Results</label>
-        <div class="col-md-8">
-            <textarea
-                name="output"
-                ng-model="output"
-                class="form-control"
-                rows="10"
-                ng-readonly="true"
-                placeholder="Results will be shown in here"
-            ></textarea>
         </div>
     </div>
 
@@ -97,5 +86,11 @@
 
 </fieldset>
 </form>
+
+<div>
+    <dtable options="options" rows="builds" class="material"></dtable>
+</div>
+
+</div>
 </body>
 </html>

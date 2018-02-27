@@ -108,7 +108,19 @@
             var packTime = sum(this.packEvents);
             var unpackTime = sum(this.unpackEvents)
             var gcTime = this.gcTime;
-            completionListener(scenario, phase, number, step, tasks, buildScan, executionTime, taskExecutionTime, gcTime, packTime, unpackTime);
+            completionListener({
+                scenario: scenario,
+                phase: phase,
+                number: number,
+                step: step,
+                tasks: tasks,
+                buildScan: buildScan,
+                executionTime: executionTime,
+                taskExecutionTime: taskExecutionTime,
+                gcTime: gcTime,
+                packTime: packTime,
+                unpackTime: unpackTime
+            });
         }
     }
 
