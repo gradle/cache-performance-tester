@@ -119,8 +119,7 @@
     // Code below is a generic utility for interacting with the Export API.
     
     class BuildProcessor {
-        constructor(gradleEnterpriseServerUrl, maxConcurrentBuildsToProcess, eventHandlerClasses, completionListener) {
-            this.gradleEnterpriseServerUrl = gradleEnterpriseServerUrl;
+        constructor(maxConcurrentBuildsToProcess, eventHandlerClasses, completionListener) {
             this.eventHandlerClasses = eventHandlerClasses;
             this.allHandledEventTypes = this.getAllHandledEventTypes();
             
@@ -128,20 +127,23 @@
             this.numBuildsInProcess = 0;
             this.maxConcurrentBuildsToProcess = maxConcurrentBuildsToProcess;
             this.completionListener = completionListener;
+            this.started = false;
         }
 
-        start(startTime) {
-            const buildStreamUrl = this.createBuildStreamUrl(startTime);
+        start(gradleEnterpriseServerUrl, startTime) {
+            this.started = true;
+            const buildStreamUrl = this.createBuildStreamUrl(gradleEnterpriseServerUrl, startTime);
             const buildStream = new EventSource(buildStreamUrl, { withCredentials: true });
 
             buildStream.onopen = event => console.log(`Build stream '${buildStreamUrl}' open`);
             buildStream.onerror = event => console.error('Build stream error', event);
             buildStream.addEventListener('Build', event => {
-                this.enqueue(JSON.parse(event.data));
+                this.enqueue(gradleEnterpriseServerUrl, JSON.parse(event.data));
             });
         }
 
-        enqueue(build) {
+        enqueue(gradleEnterpriseServerUrl, build) {
+            build.gradleEnterpriseServerUrl = gradleEnterpriseServerUrl;
             this.pendingBuilds.push(build);
             this.processPendingBuilds();
         }
@@ -152,8 +154,8 @@
             }
         }
 
-        createBuildStreamUrl(startTime) {
-            return `${this.gradleEnterpriseServerUrl}/build-export/v1/builds/since/${startTime}?stream`;
+        createBuildStreamUrl(gradleEnterpriseServerUrl, startTime) {
+            return `${gradleEnterpriseServerUrl}/build-export/v1/builds/since/${startTime}?stream`;
         }
 
         // Inspect the methods on the handler class to find any event handlers that start with 'on' followed by the event type like 'onBuildStarted'.
@@ -168,9 +170,9 @@
             return new Set(this.eventHandlerClasses.reduce((eventTypes, handlerClass) => eventTypes.concat(this.getHandledEventTypesForHandlerClass(handlerClass)), []));
         }
 
-        createBuildEventStreamUrl(buildId) {
+        createBuildEventStreamUrl(gradleEnterpriseServerUrl, buildId) {
             const types = [...this.allHandledEventTypes].join(',');
-            return `${this.gradleEnterpriseServerUrl}/build-export/v1/build/${buildId}/events?eventTypes=${types}`;
+            return `${gradleEnterpriseServerUrl}/build-export/v1/build/${buildId}/events?eventTypes=${types}`;
         }
 
         // Creates a map of event type -> handler instance for each event type supported by one or more handlers.
@@ -193,7 +195,7 @@
         processBuild(build) {
             this.numBuildsInProcess++;
             const buildEventHandlers = this.createBuildEventHandlers(build);
-            const buildEventStream = new EventSource(this.createBuildEventStreamUrl(build.buildId), { withCredentials: true });
+            const buildEventStream = new EventSource(this.createBuildEventStreamUrl(build.gradleEnterpriseServerUrl, build.buildId), { withCredentials: true });
             let buildEventStreamOpen = true;
 
             buildEventStream.addEventListener('BuildEvent', event => {
@@ -229,14 +231,12 @@
     }; 
 
 	module.factory("gradleEnterpriseServer", function () {
-		return function (url, from, completionListener) {
+		return function (completionListener) {
 		    const buildProcessor = new BuildProcessor(
-		      url, 
 		      MAX_CONCURRENT_BUILDS_TO_PROCESS, 
 		      BUILD_EVENT_HANDLERS,
 		      completionListener
 		    );
-		    buildProcessor.start(from);
 		    return buildProcessor;
 		};
 	});
