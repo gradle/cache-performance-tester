@@ -1,7 +1,6 @@
 (function () {
 	var app = angular.module("org.gradle.profiler.listener", [
-		"org.gradle.profile.listener.processor",
-		"data-table"
+		"org.gradle.profile.listener.processor"
 	]);
 
 	app.controller("MainController", function ($scope, gradleEnterpriseServer) {
@@ -9,7 +8,7 @@
 		$scope.builds = [];
 		$scope.buildProcessor = gradleEnterpriseServer(function (build) {
 			$scope.$apply(() => {
-				$scope.builds.push(build);
+				$scope.builds.unshift(build);
 			});
 		});
 		$scope.listen = function () {
@@ -28,39 +27,6 @@
         			buildId: match[2]
         		});
         	}
-		};
-
-		$scope.options = {
-			// rowHeight: 50,
-			// headerHeight: 50,
-			footerHeight: false,
-			scrollbarV: true,
-			selectable: true,
-			columns: [
-				{
-					name: "Scenario",
-				}, {
-					name: "Phase"
-				}, {
-					name: "Number"
-				}, {
-					name: "Step"
-				}, {
-					name: "Tasks"
-				}, {
-					name: "Execution time"
-				}, {
-					name: "Task execution time"
-				}, {
-					name: "GC time"
-				}, {
-					name: "Pack time"
-				}, {
-					name: "Unpack time"
-				}, {
-					name: "Build scan"
-				}
-			]
 		};
 	});
 })();

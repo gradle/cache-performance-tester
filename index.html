@@ -14,12 +14,7 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.js"></script>
 
     <!-- Angular -->
-    <script src="https://code.angularjs.org/1.4.7/angular.js"></script>
-
-    <link rel="stylesheet"; href="https://cdnjs.cloudflare.com/ajax/libs/angular-data-table/0.7.0/dataTable.css">
-    <link rel="stylesheet"; href="https://cdnjs.cloudflare.com/ajax/libs/angular-data-table/0.7.0/material.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-data-table/0.7.0/dataTable.js"></script>
-    <link rel="stylesheet prefetch" href="https://fontastic.s3.amazonaws.com/Jnf54BZCm7mSjGCxNRbfp3/icons.css">
+    <script src="https://code.angularjs.org/1.6.6/angular.js"></script>
 
     <title>Gradle Enterprise Export API Listener for Gradle Profiler</title>
 
@@ -28,14 +23,22 @@
     <script src="processor.js"></script>
 </head>
 
-<body>
-<div ng-controller="MainController">
+<body ng-controller="MainController">
+<nav class="navbar navbar-inverse navbar-static-top" role="navigation">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <a class="navbar-brand" href="#/">Gradle cache performance tester</a>
+        </div>
+    </div>
+</nav>
+<div role="document" class="container" ng-view>
+    <p>The cache performance tester is designed to run some incremental changes against your build and measure cache usage.</p>
 <form name="form" class="form-horizontal">
 <fieldset>
 
     <!-- URL -->
     <div class="form-group">
-        <label class="col-md-2 control-label">Gradle Enterprise URL</label>
+        <label class="col-md-2 control-label">Listen to scans</label>
         <div class="col-md-6">
             <input name="url"
                 ng-model="url"
@@ -43,8 +46,9 @@
                 class="form-control"
                 ng-required="true"
                 ng-disabled="buildProcessor.started"
-                placeholder="URL of Gradle Enterprise server to listen to, like https://gradle-enterprise.example.com"
+                placeholder="https://gradle-enterprise.example.com"
             />
+            <small class="form-text text-muted">Captures build scans produced by the Gradle Profiler on the fly.</small>
         </div>
         <div class="col-md-2">
             <button type="button"
@@ -52,21 +56,24 @@
                 ng-click="listen()"
                 ng-disabled="buildProcessor.started"
                 >
-                <span>Listen</span>
+                <span>Start listening</span>
             </button>
         </div>
     </div>
 
     <div class="form-group">
-        <label class="col-md-2 control-label">Builds to process</label>
+        <label class="col-md-2 control-label">Process output</label>
         <div class="col-md-6">
             <textarea
                 name="buildsToProcess"
                 ng-model="buildsToProcess"
                 class="form-control"
                 rows="10"
-                placeholder="Paste output from Gradle Profiler here and press 'Process'. I will pick out any build scan URLs in the text automatically."
+                placeholder="  Scenario some-scenario using Gradle 4.5.1
+  - Build scan for 'warm-up build #1' cleanup [clean]: https://gradle-enterprise.example.com/s/4hwbq4ixayzzw
+  - Build scan for 'warm-up build #1' build [assemble]: https://gradle-enterprise.example.com/s/7elrv7ah3i4n2"
             ></textarea>
+            <small class="form-text text-muted">Paste output from Gradle Profiler here and press 'Process'. I will pick out any build scan URLs in the text automatically.</small>
         </div>
         <div class="col-md-2">
             <button type="button"
@@ -88,7 +95,61 @@
 </form>
 
 <div>
-    <dtable options="options" rows="builds" class="material"></dtable>
+    <table class="table table-condensed table-bordered table-striped">
+        <thead>
+            <tr>
+                <th>Scenario</th>
+                <th>Phase</th>
+                <th>Number</th>
+                <th>Step</th>
+                <th>Tasks</th>
+                <th>Build scan</th>
+                <th>Total exec time</th>
+                <th>Task exec time</th>
+                <th>GC time</th>
+                <th>Pack time</th>
+                <th>Unpack time</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr ng-repeat="build in builds">
+                <td title="'Scenario'" sortable="'scenario'">
+                    <span>{{build.scenario}}</span>
+                </td>
+                <td title="'Phase'" sortable="'phase'">
+                    <span>{{build.phase}}</span>
+                </td>
+                <td title="'Number'" sortable="'number'">
+                    <span>{{build.number}}</span>
+                </td>
+                <td title="'Step'" sortable="'step'">
+                    <span>{{build.step}}</span>
+                </td>
+                <td title="'Tasks'" sortable="'tasks'">
+                    <span>{{build.tasks}}</span>
+                </td>
+                <td title="'Build scan'" sortable="'name'">
+                    <a href="{{build.buildScan}}">{{build.buildScan}}</a>
+                </td>
+                <td title="'Execution time'" sortable="'executionTime'">
+                    <span>{{build.executionTime}}</span>
+                </td>
+
+                <td title="'Task execution time'" sortable="'taskExecutionTime'">
+                    <span>{{build.taskExecutionTime}}</span>
+                </td>
+                <td title="'GC time'" sortable="'gcTime'">
+                    <span>{{build.gcTime}}</span>
+                </td>
+                <td title="'Pack time'" sortable="'packTime'">
+                    <span>{{build.packTime}}</span>
+                </td>
+                <td title="'Unpack time'" sortable="'unpackTime'">
+                    <span>{{build.unpackTime}}</span>
+                </td>
+            </tr>
+        </tbody>
+    </table>
 </div>
 
 </div>
