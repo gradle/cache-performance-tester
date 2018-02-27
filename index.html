@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html ng-app="org.gradle.profiler.listener">
+
+<head>
+    <meta charset="utf-8">
+
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+
+    <!-- Bootstrap -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" />
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.js"></script>
+
+    <!-- Angular -->
+    <script src="https://code.angularjs.org/1.6.6/angular.js"></script>
+    <script src="https://code.angularjs.org/1.6.6/angular-resource.js"></script>
+    <script src="https://code.angularjs.org/1.6.6/angular-route.js"></script>
+    <script src="https://angular-ui.github.io/bootstrap/ui-bootstrap-tpls-2.5.0.min.js"></script>
+
+    <title>Gradle Enterprise Export API Listener for Gradle Profiler</title>
+
+    <link rel="stylesheet" href="index.css" />
+    <script src="index.js"></script>
+    <script src="processor.js"></script>
+</head>
+
+<body>
+<form ng-controller="ConnectionController" name="form" class="form-horizontal">
+<fieldset>
+
+    <!-- URL -->
+    <div class="form-group">
+        <label class="col-md-2 control-label">Gradle Enterprise URL</label>
+        <div class="col-md-6">
+            <input name="url"
+                ng-model="url"
+                type="text"
+                class="form-control"
+                ng-required="true"
+                ng-disabled="gradleEnterprise"
+                placeholder="URL of Gradle Enterprise server, like https://gradle-enterprise.example.com"
+            />
+        </div>
+        <div class="col-md-2">
+            <button type="button"
+                class="btn btn-block btn-primary"
+                ng-click="connect()"
+                ng-disabled="gradleEnterprise"
+                >
+                <span>Connect</span>
+            </button>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label class="col-md-2 control-label">Results</label>
+        <div class="col-md-8">
+            <textarea
+                name="output"
+                ng-model="output"
+                class="form-control"
+                rows="10"
+                placeholder="Results will be shown in here"
+            ></textarea>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label class="col-md-2 control-label">Builds to process</label>
+        <div class="col-md-6">
+            <textarea
+                name="buildsToProcess"
+                ng-model="buildsToProcess"
+                class="form-control"
+                rows="10"
+                placeholder="Paste output from Gradle Profiler here and press 'Process'. I will pick out any build scan URLs in the text automatically."
+            ></textarea>
+        </div>
+        <div class="col-md-2">
+            <button type="button"
+                class="btn btn-block btn-warning"
+                ng-click="process()"
+                ng-disabled="!gradleEnterprise"
+                >
+                <span>Process</span>
+            </button>
+            <button type="button"
+                class="btn btn-block btn-danger"
+                ng-click="buildsToProcess = ''"
+                ng-disabled="!gradleEnterprise"
+                >
+                <span>Clear</span>
+            </button>
+        </div>
+    </div>
+
+</fieldset>
+</form>
+</body>
+</html>
