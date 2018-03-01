@@ -62,7 +62,7 @@ default-scenarios = [
     "without-cache",
 ]
 
-base-gradle-args = ${?defaults.gradle-args} ["--scan"]
+base-gradle-args = ${?defaults.gradle-args} ["--scan", "--init-script", "scans-init.gradle"]
 
 cached-regular = ${defaults} {
     gradle-args = ${base-gradle-args} ["--build-cache"]
