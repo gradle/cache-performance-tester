@@ -19,7 +19,6 @@
 
     class PackingAndUnpackingHandler {
         constructor(build) {
-            this.ignoreTags = !!build.ignoreTags;
             this.buildId = build.buildId;
             this.packEvents = {};
             this.unpackEvents = {};
@@ -90,7 +89,7 @@
         }
 
         complete(completionListener) {
-            if (!this.ignoreTags && !this.tagged) {
+            if (!this.tagged) {
                 return;
             }
 

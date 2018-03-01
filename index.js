@@ -23,7 +23,6 @@
         			break;
         		}
         		$scope.buildProcessor.processBuild({
-        			ignoreTags: true,
         			gradleEnterpriseServerUrl: match[1],
         			buildId: match[2]
         		});
