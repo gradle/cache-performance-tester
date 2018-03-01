@@ -19,6 +19,7 @@
 
     class PackingAndUnpackingHandler {
         constructor(build) {
+            this.ignoreTags = !!build.ignoreTags;
             this.buildId = build.buildId;
             this.gradleEnterpriseServerUrl = build.gradleEnterpriseServerUrl;
             this.packEvents = {};
@@ -90,7 +91,7 @@
         }
 
         complete(completionListener) {
-            if (!this.tagged) {
+            if (!this.ignoreTags && !this.tagged) {
                 return;
             }
 
