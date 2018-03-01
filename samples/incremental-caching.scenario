@@ -1,4 +1,4 @@
-# This is a test scenario comparig regular local caching with incremental
+# This is a test scenario comparing regular local caching with incremental
 # local caching wrt local modifications. The scenario simulates a developer
 # making a change to their already cached working copy, and rebuilding it.
 # 
