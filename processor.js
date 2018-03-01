@@ -20,6 +20,7 @@
     class PackingAndUnpackingHandler {
         constructor(build) {
             this.buildId = build.buildId;
+            this.gradleEnterpriseServerUrl = build.gradleEnterpriseServerUrl;
             this.packEvents = {};
             this.unpackEvents = {};
         }
@@ -102,7 +103,7 @@
             var number = this.number;
             var step = this.step;
             var tasks = this.tasks;
-            var buildScan = "https://e.grdev.net/s/" + this.buildId;
+            var buildScan = this.gradleEnterpriseServerUrl + "/s/" + this.buildId;
             var executionTime = this.buildFinished - this.buildStarted;
             var taskExecutionTime = this.buildFinished - this.taskExecutionStarted;
             var packTime = sum(this.packEvents);
