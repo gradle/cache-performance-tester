@@ -1,3 +1,4 @@
+// Init script to add tags to profiler-generated build scans
 rootProject {
     plugins.matching({ it.class.name == "com.gradle.scan.plugin.BuildScanPlugin" }).all {
         gradle.startParameter.buildScan = "true"
