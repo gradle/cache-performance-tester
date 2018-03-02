@@ -91,5 +91,5 @@ store-merkle = ${cached-merkle} {
 }
 
 without-cache = ${defaults} {
-	gradle-args = ${base-gradle-args}
+	gradle-args = ${base-gradle-args} ["--no-build-cache"]
 }
