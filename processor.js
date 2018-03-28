@@ -144,27 +144,27 @@
             this.started = false;
         }
 
-        start(gradleEnterpriseServerUrl, startTime) {
+        start(gradleEnterpriseServerUrl, startTime, withCredentials) {
             this.started = true;
             const buildStreamUrl = this.createBuildStreamUrl(gradleEnterpriseServerUrl, startTime);
-            const buildStream = new EventSource(buildStreamUrl, { withCredentials: true });
+            const buildStream = new EventSource(buildStreamUrl, { withCredentials: withCredentials });
 
             buildStream.onopen = event => console.log(`Build stream '${buildStreamUrl}' open`);
             buildStream.onerror = event => console.error('Build stream error', event);
             buildStream.addEventListener('Build', event => {
-                this.enqueue(gradleEnterpriseServerUrl, JSON.parse(event.data));
+                this.enqueue(gradleEnterpriseServerUrl, JSON.parse(event.data), withCredentials);
             });
         }
 
-        enqueue(gradleEnterpriseServerUrl, build) {
+        enqueue(gradleEnterpriseServerUrl, build, withCredentials) {
             build.gradleEnterpriseServerUrl = gradleEnterpriseServerUrl;
             this.pendingBuilds.push(build);
-            this.processPendingBuilds();
+            this.processPendingBuilds(withCredentials);
         }
 
-        processPendingBuilds() {
+        processPendingBuilds(withCredentials) {
             if (this.pendingBuilds.length > 0 && this.numBuildsInProcess < this.maxConcurrentBuildsToProcess) {
-                this.processBuild(this.pendingBuilds.shift());
+                this.processBuild(this.pendingBuilds.shift(), withCredentials);
             }
         }
 
@@ -206,10 +206,10 @@
             }, {});
         }
 
-        processBuild(build) {
+        processBuild(build, withCredentials) {
             this.numBuildsInProcess++;
             const buildEventHandlers = this.createBuildEventHandlers(build);
-            const buildEventStream = new EventSource(this.createBuildEventStreamUrl(build.gradleEnterpriseServerUrl, build.buildId), { withCredentials: true });
+            const buildEventStream = new EventSource(this.createBuildEventStreamUrl(build.gradleEnterpriseServerUrl, build.buildId), { withCredentials: withCredentials });
             let buildEventStreamOpen = true;
 
             buildEventStream.addEventListener('BuildEvent', event => {

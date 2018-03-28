@@ -4,7 +4,8 @@
 	]);
 
 	app.controller("MainController", function ($scope, gradleEnterpriseServer) {
-		$scope.url = null;
+		$scope.listenUrl = null;
+		$scope.withCredentials = true;
 		$scope.builds = [];
 		$scope.buildProcessor = gradleEnterpriseServer(function (build) {
 			$scope.$apply(() => {
@@ -12,7 +13,7 @@
 			});
 		});
 		$scope.listen = function () {
-			$scope.buildProcessor.start($scope.url, "now");
+			$scope.buildProcessor.start($scope.listenUrl, "now", $scope.withCredentials);
 		};
 		$scope.process = function () {
         	const urlRegex = /(https?:\/\/\S+)\/s\/(\w+)/g;
@@ -26,7 +27,7 @@
         			ignoreTags: true,
         			gradleEnterpriseServerUrl: match[1],
         			buildId: match[2]
-        		});
+        		}, $scope.withCredentials);
         	}
 		};
 	});

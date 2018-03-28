@@ -36,12 +36,12 @@
 <form name="form" class="form-horizontal">
 <fieldset>
 
-    <!-- URL -->
+    <!-- Listen -->
     <div class="form-group">
         <label class="col-md-2 control-label">Listen to scans</label>
         <div class="col-md-6">
-            <input name="url"
-                ng-model="url"
+            <input name="listenUrl"
+                ng-model="listenUrl"
                 type="text"
                 class="form-control"
                 ng-required="true"
@@ -61,6 +61,7 @@
         </div>
     </div>
 
+    <!-- Process -->
     <div class="form-group">
         <label class="col-md-2 control-label">Process output</label>
         <div class="col-md-6">
@@ -88,6 +89,22 @@
                 >
                 <span>Clear</span>
             </button>
+        </div>
+    </div>
+
+
+    <!-- Authenticated -->
+    <div class="form-group">
+        <label class="col-md-2 control-label">Authenticated connection</label>
+        <div class="col-md-6">
+            <input name="withCredentials"
+                ng-model="withCredentials"
+                type="checkbox"
+                class="form-control"
+                ng-required="true"
+                ng-disabled="buildProcessor.started"
+            />
+            <small class="form-text text-muted">Check if the GE server requires HTTP basic authentication. Your browser must be logged in (just open any build scan in another tab before using this tool).</small>
         </div>
     </div>
 
