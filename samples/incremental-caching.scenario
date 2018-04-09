@@ -10,17 +10,19 @@
 # 1) Start by making a copy of this file next to the project you want to test
 # incremental caching with.
 # 
-# 2) Place scans-init.gradle next to your scenario file, too.
+# 2) Place scans-init.gradle next to your scenario file. This will configure
+# build scans to be published to GE in a way that the performance tester tool
+# can recognize.
 # 
-# 3) Make sure remote caching is disabled. This test is to compare the
-# performance of the non-incremental and incremental local cache, and having
-# a remote cache configured would mess up the results.
+# 3) Place local-cache-init.gradle next to your scenario file, too. This will
+# configure the local cache to use the default location, and disable the remote
+# cache.
 # 
-# 4) Then choose a change in its Git history. This can be a single commit or
-# multiple ones. The change should not be trivial (like editing a comment in a
-# source file), but it should also affect only part of the project. In general,
-# the change should represent a typical modification a developer would make in
-# the project durign their everyday work.
+# 4) Then choose a change in your project's Git history. This can be a single
+# commit or multiple ones. The change should not be trivial (like editing a
+# comment in a source file), but it should also affect only part of the project.
+# In general, the change should represent a typical modification a developer
+# would make in the project durign their everyday work.
 # 
 # Pick the last commit before the change as your <BASE_COMMIT>, and the first
 # commit with the change as your <CHANGED_COMMIT>, and fill in their hashes
@@ -70,7 +72,11 @@ default-scenarios = [
     "without-cache",
 ]
 
-base-gradle-args = ${?defaults.gradle-args} ["--scan", "--init-script", "scans-init.gradle"]
+base-gradle-args = ${?defaults.gradle-args} [
+    "--scan",
+    "--init-script", "scans-init.gradle",
+    "--init-script", "local-cache-init.gradle"
+]
 
 cached-regular = ${defaults} {
     gradle-args = ${base-gradle-args} ["--build-cache"]
